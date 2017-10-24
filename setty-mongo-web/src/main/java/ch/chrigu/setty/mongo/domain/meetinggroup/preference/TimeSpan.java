@@ -1,8 +1,10 @@
 package ch.chrigu.setty.mongo.domain.meetinggroup.preference;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalTime;
 
 /**
@@ -11,8 +13,13 @@ import java.time.LocalTime;
  */
 @Getter
 @AllArgsConstructor
-public class TimeSpan {
+class TimeSpan {
+    @JsonProperty(required = true)
     private LocalTime from;
+
+    @JsonProperty(required = true)
     private LocalTime to;
+
+    @PositiveOrZero
     private int days;
 }
