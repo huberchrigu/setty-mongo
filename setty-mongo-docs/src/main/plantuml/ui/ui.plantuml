@@ -1,0 +1,14 @@
+@startuml
+component UI {
+    component Component
+    component ResourceService #Yellow
+
+    Component ..> ResourceService : needs
+}
+
+component Backend {
+    component Resource
+}
+
+ResourceService ..> Resource : call
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+[*] --> Root : GET
+Root --> Collection : GET
+Collection --> Collection : POST
+Collection --> Item : GET
+Item --> Item : PUT/DELETE
+@enduml

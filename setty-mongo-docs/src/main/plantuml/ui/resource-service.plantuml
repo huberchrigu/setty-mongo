@@ -1,0 +1,10 @@
+@startuml
+participant UserListComponent
+participant ResourceService
+participant UserResource
+
+UserListComponent -> ResourceService : get root
+ResourceService --> UserListComponent : return root
+UserListComponent -> RootResource : find all 'users'
+RootResource --> UserListComponent : return all users
+@enduml
