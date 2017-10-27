@@ -3,34 +3,30 @@ package ch.chrigu.setty.mongo.domain.meetinggroup.preference;
 import ch.chrigu.setty.mongo.domain.suggestion.CalendarEntry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.data.annotation.Transient;
 
-import java.beans.ConstructorProperties;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 @Getter
-@EqualsAndHashCode
+@AllArgsConstructor
 public class MeetingPreference {
     @JsonProperty(required = true)
+    @NonNull
     private DayOfWeek day;
 
     @JsonProperty(required = true)
+    @NonNull
     private TimeSpan timeSpan;
 
     @JsonIgnore
     @Transient
-    private WeekFields weekFields = WeekFields.of(Locale.getDefault());
-
-    @ConstructorProperties({"day", "timeSpan"})
-    MeetingPreference(DayOfWeek day, TimeSpan timeSpan) {
-        this.day = day;
-        this.timeSpan = timeSpan;
-    }
+    private final WeekFields weekFields = WeekFields.of(Locale.getDefault());
 
     public CalendarEntry toCalendarEntry(int year, int week) {
         LocalDate from = LocalDate.now().withYear(year).with(weekFields.weekOfYear(), week).with(weekFields.dayOfWeek(), day.getValue());

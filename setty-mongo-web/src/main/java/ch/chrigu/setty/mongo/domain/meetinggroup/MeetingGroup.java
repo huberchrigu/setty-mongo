@@ -6,6 +6,7 @@ import ch.chrigu.setty.mongo.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.List;
@@ -20,5 +21,6 @@ public class MeetingGroup extends AggregateRoot {
     private List<MeetingPreference> preferences;
 
     @JsonProperty(required = true)
+    @NonNull
     private String name;
 }
