@@ -1,18 +1,17 @@
 package ch.chrigu.setty.mongo.domain.meetinggroup;
 
 import ch.chrigu.setty.mongo.domain.aggregate.AggregateRoot;
+import ch.chrigu.setty.mongo.domain.declaration.RequiredForDeserialization;
 import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
 import ch.chrigu.setty.mongo.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Set;
 
-@AllArgsConstructor
 @Getter
 public class MeetingGroup extends AggregateRoot {
     @DBRef
@@ -21,6 +20,23 @@ public class MeetingGroup extends AggregateRoot {
     private List<MeetingPreference> preferences;
 
     @JsonProperty(required = true)
-    @NonNull
     private String name;
+
+    /**
+     * The lombok constructor with <code>@NonNull</code> does not work.
+     */
+    public MeetingGroup(Set<User> members, List<MeetingPreference> preferences, String name) {
+        Assert.state(!name.isEmpty(), "A meeting group must have a name");
+        this.members = members;
+        this.preferences = preferences;
+        this.name = name;
+    }
+
+    /**
+     * The no-args constructor is required for linking members. The normal constructor (with preconditions) does not work
+     * yet.
+     */
+    @RequiredForDeserialization
+    protected MeetingGroup() {
+    }
 }
