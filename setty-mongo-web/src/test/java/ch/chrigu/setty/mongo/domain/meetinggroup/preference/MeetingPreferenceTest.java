@@ -10,6 +10,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -17,36 +18,36 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MeetingPreferenceTest {
 
-    @Mock
-    private TimeSpan timeSpan;
+	@Mock
+	private TimeSpan timeSpan;
 
-    private MeetingPreference testee;
+	private MeetingPreference testee;
 
-    @Test
-    public void calendarEntryShouldBeOnOneDay() throws Exception {
-        withPreference(DayOfWeek.MONDAY, LocalTime.of(19, 0), LocalTime.of(22, 0), 0);
+	@Test
+	public void calendarEntryShouldBeOnOneDay() throws Exception {
+		withPreference(DayOfWeek.MONDAY, LocalTime.of(19, 0), LocalTime.of(22, 0), 0);
 
-        CalendarEntry expectedEntry = new CalendarEntry(
-                LocalDateTime.of(2017, Month.JANUARY, 9, 19, 0),
-                LocalDateTime.of(2017, Month.JANUARY, 9, 22, 0));
-        assertThat(testee.toCalendarEntry(2017, 2)).isEqualTo(expectedEntry);
-    }
+		CalendarEntry expectedEntry = new CalendarEntry(
+				LocalDateTime.of(2017, Month.JANUARY, 9, 19, 0).atOffset(ZoneOffset.UTC),
+				LocalDateTime.of(2017, Month.JANUARY, 9, 22, 0).atOffset(ZoneOffset.UTC));
+		assertThat(testee.toCalendarEntry(2017, 2)).isEqualTo(expectedEntry);
+	}
 
-    @Test
-    public void calendarEntryShouldBeOnTwoDays() throws Exception {
-        withPreference(DayOfWeek.SUNDAY, LocalTime.of(20, 30), LocalTime.of(1, 0), 1);
+	@Test
+	public void calendarEntryShouldBeOnTwoDays() throws Exception {
+		withPreference(DayOfWeek.SUNDAY, LocalTime.of(20, 30), LocalTime.of(1, 0), 1);
 
-        CalendarEntry expectedEntry = new CalendarEntry(
-                LocalDateTime.of(2018, Month.MARCH, 11, 20, 30),
-                LocalDateTime.of(2018, Month.MARCH, 12, 1, 0));
-        assertThat(testee.toCalendarEntry(2018, 10)).isEqualTo(expectedEntry);
-    }
+		CalendarEntry expectedEntry = new CalendarEntry(
+				LocalDateTime.of(2018, Month.MARCH, 11, 20, 30).atOffset(ZoneOffset.UTC),
+				LocalDateTime.of(2018, Month.MARCH, 12, 1, 0).atOffset(ZoneOffset.UTC));
+		assertThat(testee.toCalendarEntry(2018, 10)).isEqualTo(expectedEntry);
+	}
 
-    private void withPreference(DayOfWeek dayOfWeek, LocalTime from, LocalTime to, int days) {
-        testee = new MeetingPreference(dayOfWeek, timeSpan);
-        when(timeSpan.getFrom()).thenReturn(from);
-        when(timeSpan.getTo()).thenReturn(to);
-        when(timeSpan.getDays()).thenReturn(days);
-    }
+	private void withPreference(DayOfWeek dayOfWeek, LocalTime from, LocalTime to, int days) {
+		testee = new MeetingPreference(dayOfWeek, timeSpan);
+		when(timeSpan.getFrom()).thenReturn(from.atOffset(ZoneOffset.UTC));
+		when(timeSpan.getTo()).thenReturn(to.atOffset(ZoneOffset.UTC));
+		when(timeSpan.getDays()).thenReturn(days);
+	}
 
 }
