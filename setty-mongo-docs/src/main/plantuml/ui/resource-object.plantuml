@@ -1,0 +1,25 @@
+@startuml
+class ResourceObject {
+    hasLink(relation: string): boolean
+    getEmbeddedResources(resourceName: string): Array<ResourceObject>
+    toResourceProperty(): ResourceProperty
+    getEmbeddedObjects(): Array<ResourceProperty>
+    getChildProperties(): Array<ResourceProperty>
+}
+class ResourceProperty {
+    getDisplayValue(): string
+    getFormValue(): string
+    isArray(): boolean
+    isObject(): boolean
+    getName(): string
+}
+class ResourceLink
+class ResourceDescription {
+    getTitle(): string
+    toFormField(): FormField
+}
+
+ResourceObject ..> ResourceProperty
+ResourceObject ..> "*" ResourceLink
+ResourceObject ..> ResourceDescription
+@enduml
