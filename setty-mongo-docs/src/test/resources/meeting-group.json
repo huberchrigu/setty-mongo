@@ -1,0 +1,15 @@
+{
+  "name": "Test",
+  "members": [
+    "{user}"
+  ],
+  "preferences": [
+    {
+      "day": "MONDAY",
+      "timeSpan": {
+        "from": "14:00:00.000Z",
+        "to": "18:00:00.000Z"
+      }
+    }
+  ]
+}

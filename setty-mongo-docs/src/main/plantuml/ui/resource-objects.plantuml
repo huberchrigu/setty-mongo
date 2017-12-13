@@ -1,0 +1,16 @@
+@startuml
+class ResourceObjectAdapter
+class ResourceLink
+class ResourceProperty
+interface DataHolder {
+    getDisplayValue()
+    getFormValue()
+}
+
+ResourceObjectAdapter ..> "*" ResourceObjectAdapter
+ResourceObjectAdapter ..> "*" ResourceLink
+ResourceObjectAdapter ..> "*" ResourceProperty
+
+ResourceObjectAdapter --|> DataHolder
+ResourceProperty --|> DataHolder
+@enduml

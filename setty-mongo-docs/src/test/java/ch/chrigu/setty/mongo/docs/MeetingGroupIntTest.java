@@ -1,16 +1,13 @@
 package ch.chrigu.setty.mongo.docs;
 
-import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
-import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
-import ch.chrigu.setty.mongo.domain.meetinggroup.preference.TimeSpan;
 import ch.chrigu.setty.mongo.domain.user.User;
 import ch.chrigu.setty.mongo.domain.user.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -19,10 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashSet;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -41,11 +36,11 @@ public class MeetingGroupIntTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private UserRepository userRepository;
     private User user;
+
+    @Value("classpath:meeting-group.json")
+    private Path meetingGroupBody;
 
     @Before
     public void setUp() {
@@ -58,15 +53,11 @@ public class MeetingGroupIntTest {
 
     @Test
     public void meetingGroupShouldBeCreated() throws Exception {
-        MeetingGroup meetingGroup = new MeetingGroup(new HashSet<>(Collections.singletonList(
-                user
-        )), Collections.singletonList(
-                new MeetingPreference(DayOfWeek.MONDAY, new TimeSpan(LocalTime.parse("14:00"), LocalTime.parse("18:00"), 0))
-        ), "Test Group");
+        String body = Files.newBufferedReader(meetingGroupBody).lines().reduce("", (a, b) -> a + "\n" + b);
 
         mockMvc.perform(post("/meetingGroups")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(meetingGroup)))
+                .content(body.replace("{user}", "http://localhost:8080/users/" + user.getId())))
                 .andExpect(status().isCreated())
                 .andDo(document("create-meeting-group"));
     }
