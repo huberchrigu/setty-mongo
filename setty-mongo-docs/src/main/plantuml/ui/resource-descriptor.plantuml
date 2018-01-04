@@ -1,16 +1,14 @@
 @startuml
 class SchemaService<<Service>>
-interface ResourceDescriptorResolver {
+interface ResourceDescriptorProvider {
     getDescriptor()
     getDescriptorAndAssociations()
 }
-interface ResourceDescriptor {
-    resolveAssociation()
+interface PropertyDescriptor {
 }
 class CombiningDescriptor {
-    resolveAssociations()
 }
-class ResourceObject
+class ResourceAdapter
 class ResourceProperty {
     resolveDescriptor()
     getDescriptor()
@@ -19,52 +17,34 @@ class JsonSchemaDescriptor {
 }
 class AlpsResourceDescriptor {
 }
-interface AssociationObserver {
-    notifyAssociatedResource(resourceName)
-}
-interface AssociationResourceProvider {
-    getAssociatedResourceName()
-}
 
-SchemaService <.. ResourceDescriptorResolver
-SchemaService <.. CombiningDescriptor
-SchemaService <.. JsonSchemaDescriptor
-SchemaService <.. AlpsResourceDescriptor
+SchemaService <.. ResourceDescriptorProvider
 
-ResourceProperty <|-- ResourceObject
-ResourceProperty ..> ResourceDescriptorResolver
+ResourceProperty <|-- ResourceAdapter
+ResourceProperty ..> ResourceDescriptorProvider
 
-ResourceDescriptor <.. ResourceProperty
-ResourceDescriptor <|-- JsonSchemaDescriptor
-ResourceDescriptor <|-- AlpsResourceDescriptor
-ResourceDescriptor <|-- CombiningDescriptor
-ResourceDescriptor <.. ResourceDescriptorResolver
+PropertyDescriptor <.. ResourceProperty
+PropertyDescriptor <|-- JsonSchemaDescriptor
+PropertyDescriptor <|-- AlpsResourceDescriptor
+PropertyDescriptor <|-- CombiningDescriptor
+PropertyDescriptor <.. ResourceDescriptorProvider
 
 CombiningDescriptor ..> JsonSchemaDescriptor
 CombiningDescriptor ..> AlpsResourceDescriptor
 
-AssociationObserver <|-- JsonSchemaObserver
-AssociationObserver <|-- AlpsResourceDescriptor
-AssociationResourceProvider <|-- AlpsResourceDescriptor
-
-note right of ResourceDescriptor
+note right of PropertyDescriptor
     Static description of a resource/property.
 end note
 
-note bottom of CombiningDescriptor
+note bottom of ResourceDescriptorProvider
     Resolving associations:
     1. Find a descriptor with the ability to get the associated resource name
-    2. Notify all descriptors that need to know the resource name.
-    3. Resolve all descriptors' association.
-    4. Get all children and then do the same.
+    3. Fetch the associated resource
+    4. Get all children and then do the same
 end note
 
 note bottom of AlpsResourceDescriptor
     Knows which resource belongs to an association/uri property.
-end note
-
-note bottom of JsonSchemaDescriptor
-    Does not know the associated resource, but needs to load its JSON schema.
 end note
 
 @enduml
