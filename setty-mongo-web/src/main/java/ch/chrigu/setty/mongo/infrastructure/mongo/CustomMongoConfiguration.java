@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.Arrays;
 
@@ -23,13 +24,23 @@ import java.util.Arrays;
 public class CustomMongoConfiguration extends AbstractMongoConfiguration {
 
     @Bean
-    public Converter<String, OffsetTime> documentOffsetTimeConverter() {
+    public Converter<String, OffsetTime> stringOffsetTimeConverter() {
         return new StringOffsetTimeConverter();
     }
 
     @Bean
     public Converter<OffsetTime, String> offsetTimeStringConverter() {
         return new OffsetTimeStringConverter();
+    }
+
+    @Bean
+    public Converter<String, OffsetDateTime> dateOffsetDateTimeConverter() {
+        return new StringOffsetDateTimeConverter();
+    }
+
+    @Bean
+    public Converter<OffsetDateTime, String> offsetDateTimeDateConverter() {
+        return new OffsetDateTimeStringConverter();
     }
 
     @Override
@@ -48,8 +59,10 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
     @NonNull
     public CustomConversions customConversions() {
         return new MongoCustomConversions(Arrays.asList(
-                documentOffsetTimeConverter(),
-                offsetTimeStringConverter()
+                stringOffsetTimeConverter(),
+                offsetTimeStringConverter(),
+                dateOffsetDateTimeConverter(),
+                offsetDateTimeDateConverter()
         ));
     }
 
@@ -62,12 +75,30 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
         }
     }
 
+    @ReadingConverter
+    private class StringOffsetDateTimeConverter implements Converter<String, OffsetDateTime> {
+        @Nullable
+        @Override
+        public OffsetDateTime convert(@NonNull String s) {
+            return OffsetDateTime.parse(s);
+        }
+    }
+
     @WritingConverter
     private class OffsetTimeStringConverter implements Converter<OffsetTime, String> {
         @Nullable
         @Override
         public String convert(@NonNull OffsetTime offsetTime) {
             return offsetTime.toString();
+        }
+    }
+
+    @WritingConverter
+    private class OffsetDateTimeStringConverter implements Converter<OffsetDateTime, String> {
+        @Nullable
+        @Override
+        public String convert(@NonNull OffsetDateTime offsetDateTime) {
+            return offsetDateTime.toString();
         }
     }
 }
