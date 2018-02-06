@@ -1,16 +1,16 @@
 package ch.chrigu.setty.mongo.domain.aggregate;
 
-import java.util.Date;
-
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
+import org.springframework.hateoas.Identifiable;
 
-import lombok.Getter;
+import java.util.Date;
 
 @Getter
-public class AggregateRoot {
+public class AggregateRoot implements Identifiable<String> {
     @Id
     private String id;
 

@@ -9,9 +9,10 @@
 
 0. Any unknown object, even though it has a Serializer that returns a String, like `OffsetTime`,
    returns something like `{content: 'the actual serialized value'}`. Workaround: `@JsonUnwrapped`.
-   
-# Guidelines
-## Dates and Times
 
-To circumvent above issues, do not use any `Offset...` or `Zoned...` date classes. Instead either
-only use `Local...` or the old `Date`. When using the first, only use UTC dates and times.
+## Alps
+0. No way to add custom descriptors.
+
+## Web
+
+0. `@RepositoryRestController` does not work.

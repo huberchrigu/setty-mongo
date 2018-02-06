@@ -1,0 +1,8 @@
+@startuml
+actor User
+participant System
+
+User -> System : Show next N suggestions
+System -> System : Create or get next N suggestions
+System --> User : Next N suggestions
+@enduml

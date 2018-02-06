@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-class Suggestion extends AggregateRoot {
+public class Suggestion extends AggregateRoot {
     @JsonProperty(required = true)
     @DBRef
     private MeetingGroup forGroup;
