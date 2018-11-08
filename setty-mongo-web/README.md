@@ -1,3 +1,6 @@
+# Setup
+Use the Java compiler flag _-parameters_ to support Jackson with annotation-free constructors.
+
 # Issues with Spring Data REST
 
 ## JsonSchema
