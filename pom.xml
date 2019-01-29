@@ -26,32 +26,13 @@
         <module>setty-mongo-docs</module>
     </modules>
 
-    <!--<dependencyManagement>--> <!-- Uncomment this to use local Spring Data Rest fixes, but then comment out spring-devtools instead -->
-        <!--<dependencies>-->
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.data</groupId>-->
-                <!--<artifactId>spring-data-rest-webmvc</artifactId>-->
-                <!--<version>3.1.0.BUILD-SNAPSHOT</version>-->
-            <!--</dependency>-->
-        <!--</dependencies>-->
-    <!--</dependencyManagement>-->
     <dependencyManagement>
         <dependencies>
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.data</groupId>-->
-                <!--<artifactId>spring-data-rest-core</artifactId>-->
-                <!--<version>3.0.3.RELEASE</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.data</groupId>-->
-                <!--<artifactId>spring-data-rest-webmvc</artifactId>-->
-                <!--<version>3.0.3.RELEASE</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.data</groupId>-->
-                <!--<artifactId>spring-data-rest-hal-browser</artifactId>-->
-                <!--<version>3.0.3.RELEASE</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-rest-webmvc</artifactId>
+                <version>3.2.0.BUILD-FORK-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
