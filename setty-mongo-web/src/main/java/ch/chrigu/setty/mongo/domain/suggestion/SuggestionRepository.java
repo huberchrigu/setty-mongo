@@ -23,5 +23,7 @@ public interface SuggestionRepository extends MongoRepository<Suggestion, String
     @Nullable
     <S extends Suggestion> List<S> saveAll(@Nullable Iterable<S> suggestions);
 
+    List<Suggestion> findByForGroup(MeetingGroup forGroup);
+
     Optional<Suggestion> findByForGroupAndCalendarEntry(MeetingGroup forGroup, CalendarEntry calendarEntry);
 }

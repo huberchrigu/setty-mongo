@@ -1,12 +1,17 @@
 package ch.chrigu.setty.mongo.domain.suggestion.service;
 
+import ch.chrigu.setty.mongo.domain.calendar.UserCalendarUpdatedEvent;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroupRepository;
+import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroupUpdatedEvent;
+import ch.chrigu.setty.mongo.domain.suggestion.CalendarEntry;
 import ch.chrigu.setty.mongo.domain.suggestion.Suggestion;
 import ch.chrigu.setty.mongo.domain.suggestion.SuggestionFactory;
 import ch.chrigu.setty.mongo.domain.suggestion.SuggestionRepository;
+import ch.chrigu.setty.mongo.domain.user.User;
 import ch.chrigu.setty.mongo.infrastructure.web.UriToIdConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author christoph.huber
@@ -46,5 +52,35 @@ public class SuggestionService {
         final int end = (start + pageable.getPageSize()) > result.size() ? result.size() : (start + pageable.getPageSize());
         final List<Suggestion> subList = result.subList(start, end);
         return new PageImpl<>(subList, pageable, result.size());
+    }
+
+    @EventListener
+    public void userCalendarUpdated(UserCalendarUpdatedEvent event) {
+        updateGroupsOf(event.getUserCalendar().getOwner());
+    }
+
+    @EventListener
+    public void meetingGroupUpdatedEvent(MeetingGroupUpdatedEvent event) {
+        updateGroup(event.getMeetingGroup());
+    }
+
+    private void updateGroupsOf(User user) {
+        meetingGroupRepository.findAllByMembers(user).forEach(this::updateGroup);
+    }
+
+    private void updateGroup(MeetingGroup group) {
+        List<Suggestion> calculatedSuggestions = suggestionFactory.getNextSuggestions(group, 4);
+        List<Suggestion> oldSuggestions = suggestionRepository.findByForGroup(group);
+
+        List<Suggestion> newSuggestions = getSuggestionsMinus(calculatedSuggestions, oldSuggestions);
+        suggestionRepository.saveAll(newSuggestions);
+
+        List<Suggestion> obsolete = getSuggestionsMinus(oldSuggestions, calculatedSuggestions);
+        suggestionRepository.deleteAll(obsolete);
+    }
+
+    private List<Suggestion> getSuggestionsMinus(List<Suggestion> suggestions, List<Suggestion> subtractEqualCalendarEntries) {
+        List<CalendarEntry> oldTimes = subtractEqualCalendarEntries.stream().map(Suggestion::getCalendarEntry).collect(Collectors.toList());
+        return suggestions.stream().filter(s -> !oldTimes.contains(s.getCalendarEntry())).collect(Collectors.toList());
     }
 }

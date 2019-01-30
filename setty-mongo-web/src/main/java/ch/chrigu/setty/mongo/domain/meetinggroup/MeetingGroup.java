@@ -6,6 +6,7 @@ import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
 import ch.chrigu.setty.mongo.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.util.Assert;
 
@@ -38,5 +39,10 @@ public class MeetingGroup extends AggregateRoot {
      */
     @RequiredForDeserialization
     protected MeetingGroup() {
+    }
+
+    @DomainEvents
+    public MeetingGroupUpdatedEvent sendEvent() {
+        return new MeetingGroupUpdatedEvent(this);
     }
 }

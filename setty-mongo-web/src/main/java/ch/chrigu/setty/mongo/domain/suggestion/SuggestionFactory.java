@@ -38,7 +38,7 @@ public class SuggestionFactory {
     }
 
     private Stream<Suggestion> createSuggestions(@NotNull MeetingGroup meetingGroup, int year, int week) {
-        List<UserCalendar> userCalendars = calendarRepository.findByOwner(meetingGroup.getMembers());
+        List<UserCalendar> userCalendars = calendarRepository.findByOwnerIn(meetingGroup.getMembers());
         return meetingGroup.getPreferences().stream()
                 .map(p -> p.toCalendarEntry(year, week))
                 .filter(entry -> isNotOccupied(entry, userCalendars))

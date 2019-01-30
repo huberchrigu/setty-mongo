@@ -7,5 +7,5 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CalendarRepository extends MongoRepository<UserCalendar, String> {
-    List<UserCalendar> findByOwner(Collection<User> owners);
+    List<UserCalendar> findByOwnerIn(Collection<User> owners);
 }

@@ -6,6 +6,7 @@ import ch.chrigu.setty.mongo.domain.suggestion.CalendarEntry;
 import ch.chrigu.setty.mongo.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.util.Assert;
 
@@ -33,5 +34,10 @@ public class UserCalendar extends AggregateRoot {
      */
     @RequiredForDeserialization
     protected UserCalendar() {
+    }
+
+    @DomainEvents
+    public UserCalendarUpdatedEvent sendEvent() {
+        return new UserCalendarUpdatedEvent(this);
     }
 }

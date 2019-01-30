@@ -78,6 +78,6 @@ public class SuggestionFactoryTest {
 
         Set<User> users = Sets.newSet(user1, user2);
         when(meetingGroup.getMembers()).thenReturn(users);
-        when(calendarRepository.findByOwner(users)).thenReturn(Arrays.asList(userCalendar1, userCalendar2));
+        when(calendarRepository.findByOwnerIn(users)).thenReturn(Arrays.asList(userCalendar1, userCalendar2));
     }
 }

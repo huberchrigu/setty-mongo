@@ -1,8 +1,7 @@
 package ch.chrigu.setty.mongo.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import ch.chrigu.setty.mongo.domain.aggregate.AggregateRoot;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
