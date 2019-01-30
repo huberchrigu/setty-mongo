@@ -20,10 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author christoph.huber
@@ -45,13 +42,20 @@ public class SuggestionServiceTest {
     @Mock
     private Suggestion suggestion;
 
+    @Mock
+    private SuggestionCreateOptions options;
+    @Mock
+    private Pageable pageable;
+
     @InjectMocks
     private SuggestionService testee;
 
     @Test
     public void shouldCreateASuggestionOnlyOnce() {
         final URI uri = URI.create("http://localhost:8080/resources/123");
-        final SuggestionCreateOptions options = new SuggestionCreateOptions();
+        when(options.getMeetingGroup()).thenReturn(uri);
+        when(options.getNumOfWeeks()).thenReturn(4);
+        when(pageable.getPageSize()).thenReturn(5);
 
         when(uriToIdConverter.convert(eq(uri))).thenReturn("123");
         when(meetingGroupRepository.findById(eq("123"))).thenReturn(Optional.of(meetingGroup));
@@ -60,8 +64,7 @@ public class SuggestionServiceTest {
         when(suggestionRepository.findByForGroupAndCalendarEntry(eq(meetingGroup), any()))
                 .thenReturn(Optional.of(suggestion));
 
-        assertThat(testee.getOrCreateSuggestions(options, mock(Pageable.class)))
-                .hasSize(2);
+        assertThat(testee.getOrCreateSuggestions(options, pageable)).hasSize(2);
 
         verify(suggestionRepository, never()).save(any());
         verify(suggestionRepository, never()).saveAll(any());
