@@ -15,6 +15,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
+import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@RepositoryEventHandler
 public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
     private final SuggestionFactory suggestionFactory;
@@ -52,6 +55,12 @@ public class SuggestionService {
         final int end = (start + pageable.getPageSize()) > result.size() ? result.size() : (start + pageable.getPageSize());
         final List<Suggestion> subList = result.subList(start, end);
         return new PageImpl<>(subList, pageable, result.size());
+    }
+
+    @HandleBeforeDelete
+    public void meetingGroupDeleted(MeetingGroup meetingGroup) {
+        List<Suggestion> suggestions = suggestionRepository.findByForGroup(meetingGroup);
+        suggestionRepository.deleteAll(suggestions);
     }
 
     @EventListener
