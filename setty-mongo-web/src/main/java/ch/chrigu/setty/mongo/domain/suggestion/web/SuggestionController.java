@@ -1,6 +1,7 @@
 package ch.chrigu.setty.mongo.domain.suggestion.web;
 
 import ch.chrigu.setty.mongo.domain.suggestion.Suggestion;
+import ch.chrigu.setty.mongo.domain.suggestion.service.Vote;
 import ch.chrigu.setty.mongo.domain.suggestion.service.SuggestionCreateOptions;
 import ch.chrigu.setty.mongo.domain.suggestion.service.SuggestionService;
 import lombok.AllArgsConstructor;
@@ -10,9 +11,8 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,12 +26,18 @@ import javax.validation.Valid;
 @ExposesResourceFor(Suggestion.class)
 public class SuggestionController {
     private final SuggestionService suggestionService;
-    private final PagedResourcesAssembler<Suggestion> pageAssembler;
-    private final SuggestionResourceAssembler suggestionResourceAssembler;
+    private final PagedResourcesAssembler<Suggestion> suggestionPagedResourceAssembler;
+    private final SuggestionResourceAssembler suggestionResourceAssembler; // TODO: This assembler should use the regular resource processor
 
     @GetMapping("/search/findNext")
-    public Resources<Resource<Suggestion>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
+    Resources<Resource<Suggestion>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
         final Page<Suggestion> page = suggestionService.getOrCreateSuggestions(options, pageable);
-        return pageAssembler.toResource(page, suggestionResourceAssembler);
+        return suggestionPagedResourceAssembler.toResource(page, suggestionResourceAssembler);
+    }
+
+    @PostMapping("/{id}/votes")
+    Resource<Suggestion> vote(@PathVariable String id, @RequestBody @Validated Vote vote) {
+        final Suggestion suggestion = suggestionService.vote(id, vote);
+        return suggestionResourceAssembler.toResource(suggestion);
     }
 }
