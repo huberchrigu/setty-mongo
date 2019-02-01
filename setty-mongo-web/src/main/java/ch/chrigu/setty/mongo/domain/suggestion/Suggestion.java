@@ -2,7 +2,9 @@ package ch.chrigu.setty.mongo.domain.suggestion;
 
 import ch.chrigu.setty.mongo.domain.aggregate.AggregateRoot;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
+import ch.chrigu.setty.mongo.domain.suggestion.reaction.ReactionType;
 import ch.chrigu.setty.mongo.domain.suggestion.reaction.UserReaction;
+import ch.chrigu.setty.mongo.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -27,5 +29,13 @@ public class Suggestion extends AggregateRoot {
         Assert.notNull(calendarEntry, "A suggestion needs a calendar entry");
         this.forGroup = forGroup;
         this.calendarEntry = calendarEntry;
+    }
+
+    public void addVote(User user, ReactionType reactionType) {
+        Assert.state(userReactions.stream().noneMatch(r -> r.getUser().equals(user)),
+                "User " + user.getId() + " already voted");
+        Assert.state(forGroup.getMembers().contains(user), "User " + user.getId() +
+                " is not part of the group");
+        userReactions.add(new UserReaction(user, reactionType));
     }
 }

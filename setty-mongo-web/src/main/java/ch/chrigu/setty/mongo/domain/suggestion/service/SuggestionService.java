@@ -4,11 +4,9 @@ import ch.chrigu.setty.mongo.domain.calendar.UserCalendarUpdatedEvent;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroupRepository;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroupUpdatedEvent;
-import ch.chrigu.setty.mongo.domain.suggestion.CalendarEntry;
-import ch.chrigu.setty.mongo.domain.suggestion.Suggestion;
-import ch.chrigu.setty.mongo.domain.suggestion.SuggestionFactory;
-import ch.chrigu.setty.mongo.domain.suggestion.SuggestionRepository;
+import ch.chrigu.setty.mongo.domain.suggestion.*;
 import ch.chrigu.setty.mongo.domain.user.User;
+import ch.chrigu.setty.mongo.domain.user.UserRepository;
 import ch.chrigu.setty.mongo.infrastructure.web.UriToIdConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -35,6 +33,8 @@ public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
     private final SuggestionFactory suggestionFactory;
     private final MeetingGroupRepository meetingGroupRepository;
+    private final UserRepository userRepository;
+
     private final UriToIdConverter uriToIdConverter;
 
     public Page<Suggestion> getOrCreateSuggestions(SuggestionCreateOptions options, Pageable pageable) {
@@ -55,6 +55,17 @@ public class SuggestionService {
         final int end = (start + pageable.getPageSize()) > result.size() ? result.size() : (start + pageable.getPageSize());
         final List<Suggestion> subList = result.subList(start, end);
         return new PageImpl<>(subList, pageable, result.size());
+    }
+
+    public Suggestion vote(String id, Vote vote) {
+        final Suggestion suggestion = suggestionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Did not find suggestion with id " + id));
+        final String userId = uriToIdConverter.convert(vote.getUser());
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Did not find user with ID " + userId));
+        suggestion.addVote(user, vote.getReactionType());
+        suggestionRepository.save(suggestion);
+        return suggestion;
     }
 
     @HandleBeforeDelete
