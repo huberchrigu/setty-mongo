@@ -18,11 +18,11 @@ public class SuggestionSearchLinkProcessor implements ResourceProcessor<Reposito
     @Override
     public RepositorySearchesResource process(RepositorySearchesResource suggestionRepositorySearchesResource) {
         if (suggestionRepositorySearchesResource.getDomainType().equals(Suggestion.class)) {
-            suggestionRepositorySearchesResource.add(new Link(
-                    linkTo(methodOn(SuggestionController.class)
-                            .findNext(null, null))
-                            .toString() + "{?meetingGroup,numOfWeeks}",
-                    "getNext"));
+            suggestionRepositorySearchesResource.add(
+                    new Link(linkTo(methodOn(SuggestionController.class)
+                            .findNext(null, null)).toString() + "{?meetingGroup,numOfWeeks}",
+                            "getNext")
+            );
         }
         return suggestionRepositorySearchesResource;
     }
