@@ -61,8 +61,6 @@ public class SuggestionServiceTest {
         when(meetingGroupRepository.findById(eq("123"))).thenReturn(Optional.of(meetingGroup));
         when(suggestionFactory.getNextSuggestions(eq(meetingGroup), eq(4)))
                 .thenReturn(Arrays.asList(suggestion, suggestion));
-        when(suggestionRepository.findByForGroupAndCalendarEntry(eq(meetingGroup), any()))
-                .thenReturn(Optional.of(suggestion));
 
         assertThat(testee.getOrCreateSuggestions(options, pageable)).hasSize(2);
 

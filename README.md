@@ -1,3 +1,11 @@
+# Setty
+
+"Setty" is a demo application that allows the organization of meeting groups and suggests dates when they
+can meet, given all members' calendars.
+This repository contains the backend implementation and persists data in MongoDB.
+
+The UI is part of the [hateoas-navigator](https://github.com/huberchrigu/hateoas-navigator) project.
+
 # How to get started
 
 _The following steps are required due to this bug: [DATAREST-1096](https://jira.spring.io/browse/DATAREST-1096)_
