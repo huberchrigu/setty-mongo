@@ -19,7 +19,6 @@ public class SuggestionResourceAssembler implements ResourceAssembler<Suggestion
     @Override
     public Resource<Suggestion> toResource(Suggestion entity) {
         return new Resource<>(entity,
-                entityLinks.linkToSingleResource(entity).withSelfRel(),
                 entityLinks.linkToSingleResource(entity),
                 entityLinks.linkToSingleResource(entity.getForGroup()).withRel("forGroup")); // TODO: Should be .../forGroup
     }

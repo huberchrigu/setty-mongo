@@ -11,6 +11,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,10 @@ public class SuggestionController {
     }
 
     @PostMapping("/{id}/votes")
-    Resource<Suggestion> vote(@PathVariable String id, @RequestBody @Validated Vote vote) {
+    ResponseEntity<Resource<Suggestion>> vote(@PathVariable String id, @RequestBody @Validated Vote vote) {
         final Suggestion suggestion = suggestionService.vote(id, vote);
-        return suggestionResourceAssembler.toResource(suggestion);
+        return ResponseEntity.ok()
+                .eTag(suggestion.getVersion().toString())
+                .body(suggestionResourceAssembler.toResource(suggestion));
     }
 }
