@@ -6,13 +6,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.annotation.Version;
-import org.springframework.hateoas.Identifiable;
 
 import java.util.Date;
 
 @Getter
 @EqualsAndHashCode
-public abstract class AggregateRoot implements Identifiable<String> {
+public abstract class AggregateRoot {
     @Id
     private String id;
 

@@ -3,8 +3,10 @@ package ch.chrigu.setty.mongo.domain.suggestion;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,5 +27,8 @@ public interface SuggestionRepository extends MongoRepository<Suggestion, String
 
     List<Suggestion> findByForGroup(MeetingGroup forGroup);
 
+    List<Suggestion> findByForGroupAndCalendarEntryFromAfterAndCalendarEntryToBefore(MeetingGroup forGroup, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime from,
+                                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime to);
+    @RestResource(exported = false)
     Optional<Suggestion> findByForGroupAndCalendarEntry(MeetingGroup forGroup, CalendarEntry calendarEntry);
 }

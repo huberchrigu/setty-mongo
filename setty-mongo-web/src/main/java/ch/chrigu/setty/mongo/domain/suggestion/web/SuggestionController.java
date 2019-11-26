@@ -7,10 +7,10 @@ import ch.chrigu.setty.mongo.domain.suggestion.service.SuggestionService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,26 +21,25 @@ import javax.validation.Valid;
  * @author christoph.huber
  * @since 29.01.2018
  */
-@RestController
+@RepositoryRestController
 @AllArgsConstructor
 @RequestMapping("/suggestions")
-@ExposesResourceFor(Suggestion.class)
 public class SuggestionController {
     private final SuggestionService suggestionService;
     private final PagedResourcesAssembler<Suggestion> suggestionPagedResourceAssembler;
-    private final SuggestionResourceAssembler suggestionResourceAssembler; // TODO: This assembler should use the regular resource processor
+    private final SuggestionModelAssembler suggestionModelAssembler;
 
     @GetMapping("/search/findNext")
-    Resources<Resource<Suggestion>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
+    PagedModel<EntityModel<Suggestion>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
         final Page<Suggestion> page = suggestionService.getOrCreateSuggestions(options, pageable);
-        return suggestionPagedResourceAssembler.toResource(page, suggestionResourceAssembler);
+        return suggestionPagedResourceAssembler.toModel(page, suggestionModelAssembler);
     }
 
     @PostMapping("/{id}/votes")
-    ResponseEntity<Resource<Suggestion>> vote(@PathVariable String id, @RequestBody @Validated Vote vote) {
+    ResponseEntity<EntityModel<Suggestion>> vote(@PathVariable String id, @RequestBody @Validated Vote vote) {
         final Suggestion suggestion = suggestionService.vote(id, vote);
         return ResponseEntity.ok()
                 .eTag(suggestion.getVersion().toString())
-                .body(suggestionResourceAssembler.toResource(suggestion));
+                .body(suggestionModelAssembler.toModel(suggestion));
     }
 }
