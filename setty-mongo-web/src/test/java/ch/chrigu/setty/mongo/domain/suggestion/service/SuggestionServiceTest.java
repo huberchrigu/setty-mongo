@@ -53,7 +53,7 @@ public class SuggestionServiceTest {
     @Test
     public void shouldCreateASuggestionOnlyOnce() {
         final URI uri = URI.create("http://localhost:8080/resources/123");
-        when(options.getMeetingGroup()).thenReturn(uri);
+        when(options.getForGroup()).thenReturn(uri);
         when(options.getNumOfWeeks()).thenReturn(4);
         when(pageable.getPageSize()).thenReturn(5);
 

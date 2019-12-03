@@ -16,5 +16,5 @@ public class SuggestionCreateOptions {
     private int numOfWeeks = 4;
 
     @NotNull
-    private URI meetingGroup;
+    private URI forGroup;
 }

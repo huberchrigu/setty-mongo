@@ -20,7 +20,7 @@ public class SuggestionSearchLinkProcessor implements RepresentationModelProcess
         if (suggestionRepositorySearchesResource.getDomainType().equals(Suggestion.class)) {
             suggestionRepositorySearchesResource.add(
                     new Link(linkTo(methodOn(SuggestionController.class)
-                            .findNext(null, null)).toString() + "{?meetingGroup,numOfWeeks}",
+                            .findNext(null, null)).toString() + "{?forGroup,numOfWeeks}",
                             "getNext")
             );
         }

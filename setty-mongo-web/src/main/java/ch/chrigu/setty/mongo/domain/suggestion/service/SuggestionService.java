@@ -38,7 +38,7 @@ public class SuggestionService {
     private final UriToIdConverter uriToIdConverter;
 
     public Page<Suggestion> getOrCreateSuggestions(SuggestionCreateOptions options, Pageable pageable) {
-        final String id = uriToIdConverter.convert(options.getMeetingGroup());
+        final String id = uriToIdConverter.convert(options.getForGroup());
         final MeetingGroup meetingGroup = meetingGroupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting group with id " + id + " not found"));
         final List<Suggestion> newSuggestions = suggestionFactory
@@ -52,7 +52,7 @@ public class SuggestionService {
             result.add(add);
         });
         final int start = (int) pageable.getOffset();
-        final int end = (start + pageable.getPageSize()) > result.size() ? result.size() : (start + pageable.getPageSize());
+        final int end = Math.min(start + pageable.getPageSize(), result.size());
         final List<Suggestion> subList = result.subList(start, end);
         return new PageImpl<>(subList, pageable, result.size());
     }

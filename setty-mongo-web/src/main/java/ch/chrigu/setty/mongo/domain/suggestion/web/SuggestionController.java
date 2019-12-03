@@ -30,9 +30,9 @@ public class SuggestionController {
     private final SuggestionModelAssembler suggestionModelAssembler;
 
     @GetMapping("/search/findNext")
-    PagedModel<EntityModel<Suggestion>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
+    ResponseEntity<PagedModel<EntityModel<Suggestion>>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
         final Page<Suggestion> page = suggestionService.getOrCreateSuggestions(options, pageable);
-        return suggestionPagedResourceAssembler.toModel(page, suggestionModelAssembler);
+        return ResponseEntity.ok(suggestionPagedResourceAssembler.toModel(page, suggestionModelAssembler));
     }
 
     @PostMapping("/{id}/votes")
