@@ -1,10 +1,10 @@
 package ch.chrigu.setty.mongo.domain.aggregate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.annotation.Version;
 
 import java.util.Date;
@@ -18,7 +18,7 @@ public abstract class AggregateRoot {
     @Version
     private Long version;
 
-    @ReadOnlyProperty
     @LastModifiedDate
+    @JsonIgnore
     private Date lastModified;
 }
