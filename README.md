@@ -1,4 +1,5 @@
 # Setty
+[![Build Status](https://travis-ci.org/huberchrigu/setty-mongo.svg?branch=master)](https://travis-ci.org/huberchrigu/setty-mongo)
 
 "Setty" is a demo application that allows the organization of meeting groups and suggests dates when they
 can meet, given all members' calendars.
