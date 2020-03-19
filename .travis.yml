@@ -5,5 +5,5 @@ cache:
     - $HOME/.m2
 
 install:
-  - "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"
+  - "cp .travis.settings.xml $HOME/.m2/settings.xml"
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
