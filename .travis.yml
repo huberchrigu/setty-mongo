@@ -2,9 +2,5 @@ language: java
 sudo: false
 
 install:
+  - "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
-jobs:
-  include:
-    - script: ./mvnw test -B
-      name: "Test"
