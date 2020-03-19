@@ -4,7 +4,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>setty-mongo-docs</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -16,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>ch.chrigu.setty</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>setty-mongo-web</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -25,6 +24,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
