@@ -15,7 +15,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     List<User> findByCreatedBy(String createdBy);
 
     @PreAuthorize("isAuthenticated()")
-    @PostAuthorize("hasRole('ADMIN') || @currentUserService.isNonNullAndCreatedByCurrentUser(returnObject.get())")
+    @PostAuthorize("hasRole('ADMIN') || @currentUserService.isNonNullAndCreatedByCurrentUser(returnObject.orElse(null))")
     @Override
     Optional<User> findById(String s);
 

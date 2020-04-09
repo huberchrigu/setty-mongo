@@ -1,6 +1,6 @@
 package ch.chrigu.setty.mongo.domain.suggestion;
 
-import ch.chrigu.setty.mongo.domain.calendar.CalendarRepository;
+import ch.chrigu.setty.mongo.domain.calendar.UserCalendarRepository;
 import ch.chrigu.setty.mongo.domain.calendar.UserCalendar;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
@@ -50,7 +50,7 @@ public class SuggestionFactoryTest {
     @Mock
     private UserCalendar userCalendar2;
     @Mock
-    private CalendarRepository calendarRepository;
+    private UserCalendarRepository userCalendarRepository;
 
     @Test
     public void shouldCreateOneSuggestionWhenOneIsOccupied() {
@@ -78,6 +78,6 @@ public class SuggestionFactoryTest {
 
         Set<User> users = Sets.newSet(user1, user2);
         when(meetingGroup.getMembers()).thenReturn(users);
-        when(calendarRepository.findByOwnerIn(users)).thenReturn(Arrays.asList(userCalendar1, userCalendar2));
+        when(userCalendarRepository.findByOwnerIn(users)).thenReturn(Arrays.asList(userCalendar1, userCalendar2));
     }
 }

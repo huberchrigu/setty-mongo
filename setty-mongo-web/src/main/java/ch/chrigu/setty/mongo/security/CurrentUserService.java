@@ -1,25 +1,22 @@
 package ch.chrigu.setty.mongo.security;
 
-import ch.chrigu.setty.mongo.domain.user.User;
-import ch.chrigu.setty.mongo.domain.user.UserRepository;
+import ch.chrigu.setty.mongo.domain.aggregate.WithCreatedBy;
+import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
+import ch.chrigu.setty.mongo.domain.suggestion.Suggestion;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CurrentUserService {
-    private final UserRepository userRepository;
-
-    public CurrentUserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public boolean isNonNullAndCreatedByCurrentUser(WithCreatedBy aggregateRoot) {
+        return aggregateRoot != null && isCreatedByCurrentUser(aggregateRoot);
     }
 
-    public boolean isNonNullAndCreatedByCurrentUser(User user) {
-        return user != null && isCreatedByCurrentUser(user);
-    }
-
-    public boolean isCreatedByCurrentUser(User user) {
-        return isCurrentUser(user.getCreatedBy());
+    public boolean isCreatedByCurrentUser(WithCreatedBy aggregateRoot) {
+        return isCurrentUser(aggregateRoot.getCreatedBy());
     }
 
     public boolean isCurrentUser(String userName) {
@@ -27,8 +24,24 @@ public class CurrentUserService {
         return authentication.isAuthenticated() && authentication.getName().equals(userName);
     }
 
-    public boolean isNewOrCreatedByCurrentUser(User user) {
-        return user.getId() == null || isCreatedByCurrentUser(user);
+    public boolean isNewOrCreatedByCurrentUser(WithCreatedBy aggregateRoot) {
+        return aggregateRoot.getId() == null || isCreatedByCurrentUser(aggregateRoot);
+    }
+
+    public boolean isNonNullAndRelatedToCurrentUser(MeetingGroup group) {
+        return group != null && (isCreatedByCurrentUser(group) || group.getMembers().stream().anyMatch(this::isCreatedByCurrentUser));
+    }
+
+    public boolean areAllRelatedToCurrentUser(List<MeetingGroup> groups) {
+        return groups == null || groups.stream().allMatch(this::isNonNullAndRelatedToCurrentUser);
+    }
+
+    public boolean isNonNullAndVisible(Suggestion suggestion) {
+        return suggestion != null && isNonNullAndRelatedToCurrentUser(suggestion.getForGroup());
+    }
+
+    public boolean areAllCreatedByCurrentUser(List<WithCreatedBy> aggregateRoot) {
+        return aggregateRoot == null || aggregateRoot.stream().allMatch(this::isCreatedByCurrentUser);
     }
 
     private Authentication getAuthentication() {

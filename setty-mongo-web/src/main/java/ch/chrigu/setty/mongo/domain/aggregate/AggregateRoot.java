@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Getter
 @EqualsAndHashCode
-public abstract class AggregateRoot {
+public abstract class AggregateRoot implements WithId {
     @Id
     private String id;
 

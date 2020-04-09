@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RepositoryEventHandler
 public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
+    private final CustomSuggestionRepository customSuggestionRepository;
     private final SuggestionFactory suggestionFactory;
     private final MeetingGroupRepository meetingGroupRepository;
     private final UserRepository userRepository;
@@ -68,6 +70,11 @@ public class SuggestionService {
         return suggestion;
     }
 
+    @PreAuthorize("hasRole('ADMIN') || @currentUserService.isCurrentUser(#createdBy)")
+    public List<Suggestion> findByForGroupMembersCreatedBy(String createdBy) {
+        return customSuggestionRepository.findByForGroupMembersCreatedBy(createdBy);
+    }
+
     @HandleBeforeDelete
     public void meetingGroupDeleted(MeetingGroup meetingGroup) {
         List<Suggestion> suggestions = suggestionRepository.findByForGroup(meetingGroup);
@@ -85,7 +92,7 @@ public class SuggestionService {
     }
 
     private void updateGroupsOf(User user) {
-        meetingGroupRepository.findAllByMembers(user).forEach(this::updateGroup);
+        meetingGroupRepository.findByMembers(user).forEach(this::updateGroup);
     }
 
     private void updateGroup(MeetingGroup group) {

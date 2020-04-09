@@ -21,6 +21,9 @@ public class SuggestionSearchLinkProcessor implements RepresentationModelProcess
             suggestionRepositorySearchesResource.add(
                     new Link(linkTo(methodOn(SuggestionController.class)
                             .findNext(null, null)).toString() + "{?forGroup,numOfWeeks}",
+                            "getNext"),
+                    new Link(linkTo(methodOn(SuggestionController.class)
+                            .findByForGroupMembersCreatedBy(null)).toString(),
                             "getNext")
             );
         }

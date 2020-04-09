@@ -1,11 +1,14 @@
 package ch.chrigu.setty.mongo.domain.meetinggroup;
 
 import ch.chrigu.setty.mongo.domain.aggregate.AggregateRoot;
+import ch.chrigu.setty.mongo.domain.aggregate.WithCreatedBy;
 import ch.chrigu.setty.mongo.domain.declaration.RequiredForDeserialization;
 import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
 import ch.chrigu.setty.mongo.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.domain.DomainEvents;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.util.Assert;
@@ -14,7 +17,11 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-public class MeetingGroup extends AggregateRoot {
+public class MeetingGroup extends AggregateRoot implements WithCreatedBy {
+    @CreatedBy
+    @JsonIgnore
+    private String createdBy;
+
     @DBRef
     private Set<User> members;
 
