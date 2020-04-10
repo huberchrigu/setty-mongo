@@ -8,6 +8,7 @@ import ch.chrigu.setty.mongo.domain.suggestion.*;
 import ch.chrigu.setty.mongo.domain.user.User;
 import ch.chrigu.setty.mongo.domain.user.UserRepository;
 import ch.chrigu.setty.mongo.infrastructure.web.UriToIdConverter;
+import ch.chrigu.setty.mongo.security.RunAsRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 @RepositoryEventHandler
 public class SuggestionService {
     private final SuggestionRepository suggestionRepository;
+    private final CustomSuggestionRepository customSuggestionRepository;
     private final SuggestionFactory suggestionFactory;
     private final MeetingGroupRepository meetingGroupRepository;
     private final UserRepository userRepository;
@@ -57,9 +60,14 @@ public class SuggestionService {
         return new PageImpl<>(subList, pageable, result.size());
     }
 
-    public Suggestion vote(String id, Vote vote) {
-        final Suggestion suggestion = suggestionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Did not find suggestion with id " + id));
+    /**
+     * Security: {@link SuggestionRepository#findById(String)} and {@link UserRepository#findById(String)} are secured at repository level.
+     * They make sure that the current user has created the {@link Vote#getUser() vote's user} and therefore no further check is needed.
+     */
+    @PreAuthorize("isAuthenticated()")
+    public Suggestion vote(String suggestionId, Vote vote) {
+        final Suggestion suggestion = suggestionRepository.findById(suggestionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Did not find suggestion with id " + suggestionId));
         final String userId = uriToIdConverter.convert(vote.getUser());
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Did not find user with ID " + userId));
@@ -68,13 +76,24 @@ public class SuggestionService {
         return suggestion;
     }
 
+    @PreAuthorize("hasRole('ADMIN') || @currentUserService.isCurrentUser(#createdBy)")
+    public List<Suggestion> findByForGroupMembersCreatedBy(String createdBy) {
+        return customSuggestionRepository.findByForGroupMembersCreatedBy(createdBy);
+    }
+
     @HandleBeforeDelete
     public void meetingGroupDeleted(MeetingGroup meetingGroup) {
         List<Suggestion> suggestions = suggestionRepository.findByForGroup(meetingGroup);
         suggestionRepository.deleteAll(suggestions);
     }
 
+    /**
+     * A calendar update may trigger a meeting group/suggestion update, which is permitted for the calendar's owner (if he is no the group's admin).
+     * Therefore this is run as admin user.
+     */
     @EventListener
+    @PreAuthorize("isAuthenticated()")
+    @RunAsRole("ROLE_ADMIN")
     public void userCalendarUpdated(UserCalendarUpdatedEvent event) {
         updateGroupsOf(event.getUserCalendar().getOwner());
     }
@@ -85,7 +104,7 @@ public class SuggestionService {
     }
 
     private void updateGroupsOf(User user) {
-        meetingGroupRepository.findAllByMembers(user).forEach(this::updateGroup);
+        meetingGroupRepository.findByMembers(user).forEach(this::updateGroup);
     }
 
     private void updateGroup(MeetingGroup group) {

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author christoph.huber
@@ -33,6 +35,12 @@ public class SuggestionController {
     ResponseEntity<PagedModel<EntityModel<Suggestion>>> findNext(@Valid SuggestionCreateOptions options, Pageable pageable) {
         final Page<Suggestion> page = suggestionService.getOrCreateSuggestions(options, pageable);
         return ResponseEntity.ok(suggestionPagedResourceAssembler.toModel(page, suggestionModelAssembler));
+    }
+
+    @GetMapping("/search/findByForGroupMembersCreatedBy")
+    ResponseEntity<CollectionModel<EntityModel<Suggestion>>> findByForGroupMembersCreatedBy(@RequestParam String createdBy) {
+        final List<Suggestion> suggestions = suggestionService.findByForGroupMembersCreatedBy(createdBy);
+        return ResponseEntity.ok(suggestionModelAssembler.toCollectionModel(suggestions));
     }
 
     @PostMapping("/{id}/votes")

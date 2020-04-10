@@ -1,10 +1,12 @@
 package ch.chrigu.setty.mongo.domain.suggestion;
 
 import ch.chrigu.setty.mongo.domain.aggregate.AggregateRoot;
+import ch.chrigu.setty.mongo.domain.aggregate.WithCreatedBy;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import ch.chrigu.setty.mongo.domain.suggestion.reaction.ReactionType;
 import ch.chrigu.setty.mongo.domain.suggestion.reaction.UserReaction;
 import ch.chrigu.setty.mongo.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class Suggestion extends AggregateRoot {
+public class Suggestion extends AggregateRoot implements WithCreatedBy {
     @JsonProperty(required = true)
     @DBRef
     private MeetingGroup forGroup;
@@ -37,5 +39,14 @@ public class Suggestion extends AggregateRoot {
         Assert.state(forGroup.getMembers().contains(user), "User " + user.getId() +
                 " is not part of the group");
         userReactions.add(new UserReaction(user, reactionType));
+    }
+
+    /**
+     * A suggestion belongs to the group's owner.
+     */
+    @JsonIgnore
+    @Override
+    public String getCreatedBy() {
+        return forGroup.getCreatedBy();
     }
 }
