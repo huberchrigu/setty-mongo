@@ -13,13 +13,15 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Security: Where a {@link RestResource} is not exposed, security checks should be moved to the service layer.
+ *
  * @author christoph.huber
  * @since 29.01.2018
  */
 @PreAuthorize("hasRole('ADMIN')")
 public interface SuggestionRepository extends MongoRepository<Suggestion, String> {
 
-    @PreAuthorize("hasRole('ADMIN') || @currentUserService.isCreatedByCurrentUser(#suggestion)")
+    @PreAuthorize("isAuthenticated()")
     @RestResource(exported = false)
     @Override
     @Nullable
