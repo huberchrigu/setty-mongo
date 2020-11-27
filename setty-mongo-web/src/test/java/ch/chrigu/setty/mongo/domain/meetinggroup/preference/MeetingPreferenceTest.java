@@ -1,21 +1,17 @@
 package ch.chrigu.setty.mongo.domain.meetinggroup.preference;
 
 import ch.chrigu.setty.mongo.domain.suggestion.CalendarEntry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.ZoneOffset;
+import java.time.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MeetingPreferenceTest {
 
     private static final ZoneOffset TIMEZONE = ZoneOffset.UTC;

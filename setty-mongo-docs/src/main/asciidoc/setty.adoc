@@ -1,1 +1,8 @@
-include::{snippets}/create-user/curl-request.adoc[]
+== Create meeting group
+operation::create-meeting-group[]
+
+== Create user
+operation::create-user[]
+
+== Get suggestions
+operation::get-suggestions[]

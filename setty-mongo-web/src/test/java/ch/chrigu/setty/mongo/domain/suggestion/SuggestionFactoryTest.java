@@ -5,12 +5,12 @@ import ch.chrigu.setty.mongo.domain.calendar.UserCalendar;
 import ch.chrigu.setty.mongo.domain.meetinggroup.MeetingGroup;
 import ch.chrigu.setty.mongo.domain.meetinggroup.preference.MeetingPreference;
 import ch.chrigu.setty.mongo.domain.user.User;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.util.collections.Sets;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SuggestionFactoryTest {
 
     private static final int SUGGESTION_YEAR = 2017;
@@ -56,7 +56,7 @@ public class SuggestionFactoryTest {
     public void shouldCreateOneSuggestionWhenOneIsOccupied() {
         withMeetingGroup();
         withCalendar(userCalendar1, false, true);
-        withCalendar(userCalendar2, false, false);
+        withCalendar(userCalendar2, false, null);
 
         List<Suggestion> suggestions = suggestionFactory.createSuggestionsFor(meetingGroup, SUGGESTION_YEAR, SUGGESTION_WEEK);
 
@@ -64,10 +64,12 @@ public class SuggestionFactoryTest {
         assertThat(suggestions.get(0).getCalendarEntry()).isEqualTo(preferenceEntry1);
     }
 
-    private void withCalendar(UserCalendar userCalendar, boolean preference1Overlaps, boolean preference2Overlaps) {
+    private void withCalendar(UserCalendar userCalendar, boolean preference1Overlaps, Boolean preference2Overlaps) {
         CalendarEntry entry = mock(CalendarEntry.class);
         when(entry.overlaps(preferenceEntry1)).thenReturn(preference1Overlaps);
-        when(entry.overlaps(preferenceEntry2)).thenReturn(preference2Overlaps);
+        if (preference2Overlaps != null) {
+            when(entry.overlaps(preferenceEntry2)).thenReturn(preference2Overlaps);
+        }
         when(userCalendar.getEntries()).thenReturn(Collections.singleton(entry));
     }
 

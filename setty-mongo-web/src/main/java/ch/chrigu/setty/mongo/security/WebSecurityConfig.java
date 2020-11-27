@@ -22,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().permitAll()
                 .and().logout().disable()
                 .requestCache().requestCache(new NullRequestCache())
-//                .and().httpBasic()
+                .and().httpBasic()
                 .and().exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and().csrf().disable();
     }

@@ -1,13 +1,11 @@
 package ch.chrigu.setty.mongo.infrastructure.mongo;
 
-import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -21,7 +19,7 @@ import java.util.Arrays;
  * @since 17.11.2017
  */
 @Configuration
-public class CustomMongoConfiguration extends AbstractMongoConfiguration {
+public class CustomMongoConfiguration extends AbstractMongoClientConfiguration {
 
     @Bean
     public Converter<String, OffsetTime> stringOffsetTimeConverter() {
@@ -45,19 +43,13 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
 
     @Override
     @NonNull
-    public MongoClient mongoClient() {
-        return new MongoClient();
-    }
-
-    @Override
-    @NonNull
     protected String getDatabaseName() {
         return "setty";
     }
 
     @Override
     @NonNull
-    public CustomConversions customConversions() {
+    public MongoCustomConversions customConversions() {
         return new MongoCustomConversions(Arrays.asList(
                 stringOffsetTimeConverter(),
                 offsetTimeStringConverter(),
@@ -67,7 +59,7 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
     }
 
     @ReadingConverter
-    private class StringOffsetTimeConverter implements Converter<String, OffsetTime> {
+    private static class StringOffsetTimeConverter implements Converter<String, OffsetTime> {
         @Nullable
         @Override
         public OffsetTime convert(@NonNull String s) {
@@ -76,7 +68,7 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
     }
 
     @ReadingConverter
-    private class StringOffsetDateTimeConverter implements Converter<String, OffsetDateTime> {
+    private static class StringOffsetDateTimeConverter implements Converter<String, OffsetDateTime> {
         @Nullable
         @Override
         public OffsetDateTime convert(@NonNull String s) {
@@ -85,7 +77,7 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
     }
 
     @WritingConverter
-    private class OffsetTimeStringConverter implements Converter<OffsetTime, String> {
+    private static class OffsetTimeStringConverter implements Converter<OffsetTime, String> {
         @Nullable
         @Override
         public String convert(@NonNull OffsetTime offsetTime) {
@@ -94,7 +86,7 @@ public class CustomMongoConfiguration extends AbstractMongoConfiguration {
     }
 
     @WritingConverter
-    private class OffsetDateTimeStringConverter implements Converter<OffsetDateTime, String> {
+    private static class OffsetDateTimeStringConverter implements Converter<OffsetDateTime, String> {
         @Nullable
         @Override
         public String convert(@NonNull OffsetDateTime offsetDateTime) {

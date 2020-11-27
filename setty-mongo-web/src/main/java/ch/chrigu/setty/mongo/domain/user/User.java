@@ -15,10 +15,10 @@ public class User extends AggregateRoot implements WithCreatedBy {
     private String createdBy;
 
     @JsonProperty(required = true)
-    private String lastName;
+    private final String lastName;
 
     @JsonProperty(required = true)
-    private String firstName;
+    private final String firstName;
 
     public User(String lastName, String firstName) {
         Assert.state(!lastName.isEmpty(), "A user needs a last name");
