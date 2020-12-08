@@ -23,14 +23,4 @@
         <module>setty-mongo-web</module>
         <module>setty-mongo-docs</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-rest-webmvc</artifactId>
-                <version>3.4.1-FORK</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
