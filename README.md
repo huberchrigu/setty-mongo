@@ -7,9 +7,24 @@ This repository contains the backend implementation and persists data in MongoDB
 
 The UI is part of the [hateoas-navigator](https://github.com/huberchrigu/hateoas-navigator) project.
 
-# How to get started
+## Setup
+Use the Java compiler flag _-parameters_ to support Jackson with annotation-free constructors.
 
-_The following steps are required due to this bug: [DATAREST-1096](https://jira.spring.io/browse/DATAREST-1096)_
+## Issues with Spring Data REST
 
-0. Clone the customized Spring Data REST repository: https://github.com/huberchrigu/spring-data-rest
-0. Run `mvn install` in its root
+### JsonSchema
+
+1. Arrays of associations (uris) are not allowed. See my pull request.
+2. Any unknown object like `OffsetTime` has a `$ref` attribute, even though it is a `string`.
+
+### Hal+Json
+
+1. Any unknown object, even though it has a Serializer that returns a String, like `OffsetTime`,
+   returns something like `{content: 'the actual serialized value'}`. Workaround: `@JsonUnwrapped`.
+
+### Alps
+1. No way to add custom descriptors.
+
+### Web
+
+1. `@RepositoryRestController` does not work.
