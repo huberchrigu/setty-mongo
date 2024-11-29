@@ -22,9 +22,10 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<LoggedInUser> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<LoggedInUser> login(@RequestBody @Valid LoginRequest loginRequest, HttpSession session) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         return ResponseEntity.ok(new LoggedInUser(authentication.getName()));
     }
 
