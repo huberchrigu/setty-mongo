@@ -1,7 +1,6 @@
 package ch.chrigu.setty.mongo.domain.meetinggroup.preference;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
@@ -9,15 +8,13 @@ import java.time.OffsetTime;
 
 @Getter
 public class TimeSpan {
-    @JsonUnwrapped
     @JsonProperty(required = true)
     private OffsetTime from;
 
-    @JsonUnwrapped
     @JsonProperty(required = true)
     private OffsetTime to;
 
-    private int days;
+    private final int days;
 
     public TimeSpan(OffsetTime from, OffsetTime to, int days) {
         Assert.notNull(from, "The time should not be null");
