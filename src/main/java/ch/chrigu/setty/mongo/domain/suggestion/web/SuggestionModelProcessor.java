@@ -21,7 +21,7 @@ public class SuggestionModelProcessor implements RepresentationModelProcessor<En
     public EntityModel<Suggestion> process(EntityModel<Suggestion> suggestionModel) {
         final Suggestion suggestion = suggestionModel.getContent();
         Assert.notNull(suggestion, "Cannot process empty suggestion");
-        final String href = linkTo(methodOn(SuggestionController.class).vote(suggestion.getId(), null)).toString();
+        final String href = linkTo(methodOn(SuggestionController.class).vote(suggestion.getId(), null)).toString(); // FIXME: This link does not consider the RepositoryRestController annotation
         suggestionModel.add(Link.of(href, "vote"));
         return suggestionModel;
     }
